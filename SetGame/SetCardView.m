@@ -95,63 +95,90 @@
     
     [self drawAttributesFor:path];
 }
-
-- (void)pushContextAndRotateUpSideDown
-{
-    CGContextRef context =UIGraphicsGetCurrentContext();
-    CGContextSaveGState(context);
-//    CGContextTranslateCTM(context, self.bounds.size.width, self.bounds.size.height);
-    CGContextRotateCTM(context, M_PI/2);
-}
--(void)popContext
-{
-    CGContextRestoreGState(UIGraphicsGetCurrentContext());
-}
-
 - (void)drawAttributesFor:(UIBezierPath *)path
 {
-    ///------------------
+    //----------------------------------------
     NSArray *colorPallette = @[[UIColor redColor],[UIColor greenColor],[UIColor purpleColor]];
-    NSArray *alphaPallette = @[@0,@0.3,@1.0];
-    UIColor *cardOutlineColor = colorPallette[self.color-1];
-    UIColor *cardColor = [cardOutlineColor colorWithAlphaComponent:(CGFloat)[alphaPallette[self.shading-1] floatValue]];
-    //-------------
-    [cardOutlineColor setStroke];
-    [cardColor setFill];
+    UIColor *cardColor = colorPallette[self.color-1];
+    //-----------------------------------------
+    [cardColor setStroke];
+    if (self.shading ==3 || self.shading ==2)[cardColor setFill];
     if (self.rank == 2) {
         CGFloat yOffset = self.bounds.size.height/2/Y_OFFSET_FOR_NUMBER_2;
         
         CGAffineTransform transform = CGAffineTransformMakeTranslation(0, -yOffset);
         [path applyTransform:transform];
-        
-        [path stroke];
-        [path fill];
+        [self drawPath:path];
         
         transform = CGAffineTransformMakeTranslation(0, yOffset * 2);
         [path applyTransform:transform];
-        [path stroke];
-        [path fill];
+        [self drawPath:path];
+        
     } else if (self.rank == 3) {
         CGFloat yOffset = self.bounds.size.height/2/Y_OFFSET_FOR_NUMBER_3;
         
         CGAffineTransform transform = CGAffineTransformMakeTranslation(0, -yOffset);
         [path applyTransform:transform];
-        [path stroke];
-        [path fill];
+        [self drawPath:path];
         
         transform = CGAffineTransformMakeTranslation(0, yOffset);
         [path applyTransform:transform];
-        [path stroke];
-        [path fill];
+        [self drawPath:path];
+        
         transform = CGAffineTransformMakeTranslation(0, yOffset);
         [path applyTransform:transform];
-        [path stroke];
-        [path fill];
+        [self drawPath:path];
+        
     } else {
-        
-       [path stroke];
-        [path fill];
+        [self drawPath:path];
     }
+}
+
+-(void) drawPath:(UIBezierPath* )path
+{
+    [path stroke];
+    if (self.shading ==2){
+        [path fill];
+        [self strip:path];}
+    else {
+        [path fill];}
+}
+
+void drawStripes (void *info, CGContextRef con) {
+    // assume 4 x 4 cell
+    CGContextSetFillColorWithColor(con, [[UIColor whiteColor] CGColor]);
+    CGContextFillRect(con, CGRectMake(0,0,4,2));
+}
+-(void)strip: (UIBezierPath* )path
+{
+    // push context so add clip is only temporary
+    CGContextRef context=UIGraphicsGetCurrentContext();
+    CGContextSaveGState(context);
+    
+    // add clip for this copy of the context
+    [path addClip];
+    
+    CGColorSpaceRef sp2 = CGColorSpaceCreatePattern(nil);
+    CGContextSetFillColorSpace (context, sp2);
+    CGColorSpaceRelease (sp2);
+    CGPatternCallbacks callback = {
+        0, drawStripes, nil
+    };
+    CGAffineTransform tr = CGAffineTransformIdentity;
+    CGPatternRef patt = CGPatternCreate(nil,
+                                        CGRectMake(0,0,4,4),
+                                        tr,
+                                        4, 4,
+                                        kCGPatternTilingConstantSpacingMinimalDistortion,
+                                        true,
+                                        &callback);
+    CGFloat alph = 1.0;
+    CGContextSetFillPattern(context, patt, &alph);
+    CGPatternRelease(patt);
+    CGContextFillRect(context, self.bounds);
+    
+    // restore context = remove clipping
+    CGContextRestoreGState(context);
 }
 
 - (void)setShape:(NSString *)shape
