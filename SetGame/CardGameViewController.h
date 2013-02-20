@@ -22,7 +22,9 @@
 - (Deck *)createDeck;
 
 
+
 @property (nonatomic)NSUInteger startingCardCount;  //abstract
 - (void) updateCell:(UICollectionViewCell *)cell usingCard:(Card *)card; //abstract
+- (void)addCardImageToView:(UIView *)view forCard:(Card *)card inRect:(CGRect)rect; //abstract
 
 @end

@@ -9,18 +9,14 @@
 #import "CardGameViewController.h"
 
 
-@interface CardGameViewController () <UICollectionViewDataSource>
+@interface CardGameViewController () <UICollectionViewDataSource,UICollectionViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
 @property (weak, nonatomic) IBOutlet UILabel *flipResult;
-@property (weak, nonatomic) IBOutlet UISlider *timeSlider;
-@property (weak, nonatomic) IBOutlet UILabel *sliderMaxLabel;
 @property (weak, nonatomic) IBOutlet UILabel *flipsLabel;
-@property (nonatomic, strong) NSMutableArray *flipsHistory;
 @property(nonatomic) int flipCount;
-@property (nonatomic) float sliderValue;
-@property (nonatomic) float sliderMaxValue;
 @property (weak, nonatomic) IBOutlet UICollectionView *cardCollectionView;
+@property (weak, nonatomic) IBOutlet UIView *lastFlipStatus;
 
 @end
 
@@ -46,6 +42,7 @@
     return cell;
 }
 
+
 - (void) updateCell:(UICollectionViewCell *)cell usingCard:(Card *)card
 {
    // abstract
@@ -70,40 +67,42 @@
     if(!_gameLevel || _gameLevel <2 ) _gameLevel =2;
     return _gameLevel;
 }
+
  - (BOOL)deleteMatchedCards
 {
     if(!_deleteMatchedCards) _deleteMatchedCards =NO;
     return _deleteMatchedCards; 
 }
+
+-(NSArray *)indexPathsOfMatchedCards
+{
+    NSMutableArray *indexPathsOfCards = [NSMutableArray array];
+    if (self.game.matchedCards>0 && self.game.matchedCards) {
+        NSIndexSet *indexes=[self.game getIndexesForMatchedCards:self.game.matchedCards];
+        [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+            [indexPathsOfCards addObject:[NSIndexPath indexPathForItem:idx inSection:0]];
+        }];
+        return [NSArray arrayWithArray:indexPathsOfCards];
+    }
+    return nil;
+}
+
 - (void)deleteCardsFromCollection
 {
-    if (self.deleteMatchedCards) {
-        if (self.game.matchedCards>0 && [self.game.flipResult isEqualToString:@"Matched"]) {
-            NSMutableArray *indexPathsOfMatchedCards = [NSMutableArray array];
-
-            NSIndexSet *indexes=[self.game getIndexesForMatchedCards:self.game.matchedCards];
-            [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-                [indexPathsOfMatchedCards addObject:[NSIndexPath indexPathForItem:idx inSection:0]];
-            }];
-            [self.game deleteCardsAtIndexes:indexes];
-            [self.cardCollectionView performBatchUpdates:^{
-                [self.cardCollectionView
-				 deleteItemsAtIndexPaths:indexPathsOfMatchedCards];
-            } completion:nil];
-        }
+    if (self.game.matchedCards>0 && [self.game.flipResult isEqualToString:@"Matched"]) {
+       NSMutableArray *indexPathsOfMatchedCards = [NSMutableArray array];
         
+        NSIndexSet *indexes=[self.game getIndexesForMatchedCards:self.game.matchedCards];
+        [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+            [indexPathsOfMatchedCards addObject:[NSIndexPath indexPathForItem:idx inSection:0]];
+        }];
+        [self.game deleteCardsAtIndexes:indexes];
+        [self.cardCollectionView performBatchUpdates:^{
+            [self.cardCollectionView
+             deleteItemsAtIndexPaths:indexPathsOfMatchedCards];
+        } completion:nil];
     }
 }
-
-- (NSMutableArray *) flipsHistory
-{
-    if (!_flipsHistory) _flipsHistory = [[NSMutableArray alloc] init];
-    return _flipsHistory;
-}
-
-#define MAX_SLIDER 50.0f
-#define INC_SLIDER 20.0f
-
 
 - (NSAttributedString *)cardAttributedContents:(Card *)card forFaceUp:(BOOL)isFaceUp
 {
@@ -128,14 +127,7 @@
     self.flipsLabel.text = [NSString stringWithFormat:@"Cards: %d",[self.game cardsInPlay]];
     self.scoreLabel.text = [NSString stringWithFormat:@"Score: %d", self.game.score];
     [self updateFlipResult];
-    [self.timeSlider setValue: self.sliderValue animated:YES];
     self.flipResult.alpha = 1.0;
-
-    [self.timeSlider setMaximumValue:self.sliderMaxValue];
-    [self.timeSlider setMinimumValue:0.0f];
-    self.sliderMaxLabel.text = [NSString stringWithFormat:@"%d",(int)ceilf(self.sliderMaxValue)];
-    self.sliderMaxValue += (self.sliderMaxValue>self.flipCount) ? 0.0f : INC_SLIDER;
-  
 }
 
 -(NSString *)textForFlipResult{
@@ -178,14 +170,43 @@
 -(void)updateFlipResult
 {
     if (self.game.matchedCards) {
-        NSMutableAttributedString *cardsMatched = [self attributedStringForFlipResult];
         NSString *text=[self textForFlipResult];
-        [cardsMatched appendAttributedString:[[NSAttributedString alloc] initWithString:text]];
-        self.flipResult.attributedText = cardsMatched;
+        self.flipResult.attributedText = [[NSAttributedString alloc] initWithString:text];
     } else
         self.flipResult.attributedText = [[NSAttributedString alloc] initWithString:@"Play game!"];
 }
+-(void)addCardImageToView:(UIView *)view forCard:(Card *)card inRect:(CGRect)rect
+{
+    ///abstract 
+}
 
+#define INSET_LAST_FLIP_STATUS 3
+#define NUMBER_CARDS_FOR_VIEW_SELECTED 3
+
+-(void)updatelastFlipStatus:(UIView *)view 
+{
+    CGFloat xOffset = 0;
+    CGRect rect;
+    CGFloat subViewWidth = (view.bounds.size.width-(NUMBER_CARDS_FOR_VIEW_SELECTED-1)*INSET_LAST_FLIP_STATUS)/(CGFloat)NUMBER_CARDS_FOR_VIEW_SELECTED;
+    CGFloat subViewHeight = view.bounds.size.height;
+    for (UIView *subView in [view subviews]) {
+        [subView removeFromSuperview];
+    }
+
+    if ([self.game.flipResult isEqualToString:@"Matched"] || [self.game.flipResult isEqualToString:@"don't match"] ) {
+        for (Card *card in self.game.matchedCards) {
+            rect = CGRectMake(xOffset, 0, subViewWidth, subViewHeight);
+            [self addCardImageToView:view forCard:card inRect:rect];
+                                xOffset=xOffset+subViewWidth+INSET_LAST_FLIP_STATUS;
+        }
+     }else {
+         for (Card *card in [self.game getSelectedCards]) {
+             rect = CGRectMake(xOffset, 0, subViewWidth, subViewHeight);
+             [self addCardImageToView:view forCard:card inRect:rect];
+                                  xOffset=xOffset+subViewWidth+INSET_LAST_FLIP_STATUS;
+         }
+    }
+}
 
 -(void) setFlipCount:(int)flipCount
 {
@@ -200,19 +221,19 @@
     if (indexPath) {
         [self.game flipCardAtIndex:indexPath.item];
         self.flipCount++;
-        [self deleteCardsFromCollection];
-        self.sliderValue++;
+        //--------------------
+        [self updatelastFlipStatus:self.lastFlipStatus];
+        
+        //-------------------
+        if (self.deleteMatchedCards) {[self deleteCardsFromCollection];}
     }
     [self updateUI];
-    [self.flipsHistory addObject:self.flipResult.attributedText];
 }
 
 - (IBAction)pressDeal:(UIButton *)sender
 {
     self.game = nil;
     self.flipCount =0;
-    self.sliderValue=0;
-    self.sliderMaxValue =MAX_SLIDER;
     [self updateUI];
 }
 #define NUMBER_ADD_CARDS 3
@@ -233,23 +254,6 @@
    
 }
 
--(float)sliderMaxValue
-{
-    if(!_sliderMaxValue ) _sliderMaxValue =MAX_SLIDER;
-    self.sliderMaxLabel.text = [NSString stringWithFormat:@"%D",(int)ceilf(MAX_SLIDER)];
-    return _sliderMaxValue;
-}
-
-- (IBAction)timeChanged:(UISlider *)sender
-{
-    int selectedIndex = (int) sender.value;
-    
-    if (selectedIndex < 0 || (selectedIndex > self.flipCount - 1)) return;
-    
-    self.flipResult.alpha = (selectedIndex < self.flipCount-1) ? 0.5 : 1.0;
-    self.flipResult.attributedText =[self.flipsHistory objectAtIndex: selectedIndex]; ;
-    
-}
 
 -(void)viewDidLoad
 {

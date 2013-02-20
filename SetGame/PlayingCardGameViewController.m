@@ -47,6 +47,43 @@
 }
 
 
+-(void)addCardImageToView:(UIView *)view forCard:(Card *)card inRect:(CGRect)rect;
+{
+    ///abstract
+    if ([card isKindOfClass:[PlayingCard class]]) {
+        PlayingCard *playingCard =(PlayingCard *)card;
+        PlayingCardView *newPlayingCardView = [[PlayingCardView alloc]  initWithFrame:rect];
+        newPlayingCardView.opaque = NO;
+        newPlayingCardView.rank=playingCard.rank;
+        newPlayingCardView.suit=playingCard.suit;
+        newPlayingCardView.faceUp=YES;
+ 
+        [view addSubview:newPlayingCardView];
+    }
+    
+}
+-(void)updatelastFlipStatus:(UIView *)view forCell:(UICollectionViewCell *)cell inRect:(CGRect)rect;
+{
+    ///abstract
+    if ([cell isKindOfClass:[PlayingCardCollectionViewCell class]]) {
+        PlayingCardView *playingCardView =((PlayingCardCollectionViewCell *)cell).playingCardView;
+        CGFloat ratio1 =playingCardView.frame.size.height;
+        CGFloat ratio2 =playingCardView.frame.size.width;
+        CGFloat ratio =ratio1/ratio2;
+        
+        CGFloat newHeight =rect.size.height;
+
+        CGFloat newWidth =rect.size.width/ratio;
+        PlayingCardView *newPlayingCardView = [[PlayingCardView alloc]  initWithFrame:CGRectMake(rect.origin.x, rect.origin.y, newWidth, newHeight)];
+        newPlayingCardView.opaque = NO;
+        newPlayingCardView.rank=playingCardView.rank;
+        newPlayingCardView.suit=playingCardView.suit;
+        newPlayingCardView.faceUp =YES;
+         
+        [view addSubview:newPlayingCardView];
+    }
+    
+}
 - (NSString *)textForSingleCard
 {
     Card *card = [self.game.matchedCards lastObject];

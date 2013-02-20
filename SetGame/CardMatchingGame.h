@@ -18,6 +18,7 @@
 - (void)flipCardAtIndex:(NSInteger)index;
 - (Card *)cardAtIndex:(NSInteger)index;
 - (NSIndexSet *)getIndexesForMatchedCards:(NSArray *)cards;
+- (NSArray *)getSelectedCards;
 - (void)deleteCardsAtIndexes:(NSIndexSet *)indexes;
 - (void)addCards:(NSUInteger)cardsNumber usingDeck:(Deck *)deck;
 - (NSUInteger)cardsInPlay;

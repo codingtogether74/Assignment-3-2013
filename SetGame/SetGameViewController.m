@@ -44,6 +44,23 @@
     }
 }
 
+-(void)addCardImageToView:(UIView *)view forCard:(Card *)card inRect:(CGRect)rect;
+{
+    ///abstract
+    if ([card isKindOfClass:[SetCard class]]) {
+        SetCard *setCard =(SetCard *)card;
+        SetCardView *newSetCardView = [[SetCardView alloc]  initWithFrame:rect];
+        newSetCardView.opaque = NO;
+        newSetCardView.rank=setCard.rank;
+        newSetCardView.shape=setCard.shape;
+         newSetCardView.shading=setCard.shading;
+        newSetCardView.color = setCard.color;
+        
+
+        [view addSubview:newSetCardView];
+    }
+}
+
 - (NSAttributedString *)cardAttributedContents:(Card *)card forFaceUp:(BOOL)isFaceUp
 {
     NSArray *colorPallette = @[[UIColor redColor],[UIColor greenColor],[UIColor purpleColor]];

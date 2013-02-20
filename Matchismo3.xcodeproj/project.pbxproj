@@ -26,6 +26,7 @@
 		E473069A16C6502B004085AD /* SetGameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E473069916C6502B004085AD /* SetGameViewController.m */; };
 		E47306A816C8395A004085AD /* SetCard.m in Sources */ = {isa = PBXBuildFile; fileRef = E47306A516C83958004085AD /* SetCard.m */; };
 		E47306A916C8395A004085AD /* SetCardDeck.m in Sources */ = {isa = PBXBuildFile; fileRef = E47306A716C83958004085AD /* SetCardDeck.m */; };
+		E4AB2CAD16D51EE800F6D0FE /* cardback.png in Resources */ = {isa = PBXBuildFile; fileRef = E4AB2CAC16D51EE800F6D0FE /* cardback.png */; };
 		E4C7429616D134690076A8E9 /* SetCardView.m in Sources */ = {isa = PBXBuildFile; fileRef = E4C7429516D134690076A8E9 /* SetCardView.m */; };
 		E4C7429916D137420076A8E9 /* SetCardCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E4C7429816D137420076A8E9 /* SetCardCollectionViewCell.m */; };
 		E4C9EB1F16CE873100D6B41A /* PlayingCardGameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E4C9EB1E16CE873100D6B41A /* PlayingCardGameViewController.m */; };
@@ -84,6 +85,7 @@
 		E47306A516C83958004085AD /* SetCard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SetCard.m; path = SetGame/Model/SetCard.m; sourceTree = "<group>"; };
 		E47306A616C83958004085AD /* SetCardDeck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SetCardDeck.h; path = SetGame/Model/SetCardDeck.h; sourceTree = "<group>"; };
 		E47306A716C83958004085AD /* SetCardDeck.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SetCardDeck.m; path = SetGame/Model/SetCardDeck.m; sourceTree = "<group>"; };
+		E4AB2CAC16D51EE800F6D0FE /* cardback.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cardback.png; path = CardImages/cardback.png; sourceTree = "<group>"; };
 		E4C7429416D134500076A8E9 /* SetCardView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetCardView.h; sourceTree = "<group>"; };
 		E4C7429516D134690076A8E9 /* SetCardView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetCardView.m; sourceTree = "<group>"; };
 		E4C7429716D137420076A8E9 /* SetCardCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetCardCollectionViewCell.h; sourceTree = "<group>"; };
@@ -222,6 +224,7 @@
 		E4D91BAE16D010D1000BB2FB /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				E4AB2CAC16D51EE800F6D0FE /* cardback.png */,
 				E4D91BE716D01303000BB2FB /* spade_30x30.png */,
 				E4D91BE816D01303000BB2FB /* spade_60x60.png */,
 				E4D91BE916D01303000BB2FB /* square_30x30.png */,
@@ -319,6 +322,7 @@
 				E4D91BEC16D01303000BB2FB /* spade_60x60.png in Resources */,
 				E4D91BED16D01303000BB2FB /* square_30x30.png in Resources */,
 				E4D91BEE16D01303000BB2FB /* square_60x60.png in Resources */,
+				E4AB2CAD16D51EE800F6D0FE /* cardback.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

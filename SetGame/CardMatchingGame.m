@@ -137,6 +137,20 @@
     return nil;
 }
 
+- (NSArray *)getSelectedCards
+{
+    NSMutableArray *selectedCards =[[NSMutableArray alloc] init];
+    if (self.cards) {
+        for (Card *card in self.cards) {
+            if (card.isFaceUp && !card.isUnplayable) {
+                [selectedCards addObject:card];
+            }
+        }
+        return [NSArray arrayWithArray: selectedCards];
+    }
+    return nil;
+}
+
 - (void)deleteCardsAtIndexes:(NSIndexSet *)indexes;
 {
     if (self.cards){
