@@ -35,35 +35,35 @@
             SetCard *card2 = (SetCard *)otherCard2;
             SetCard *card3 = (SetCard *)otherCard3;
             //--------------------shape---------
-            if (![card1.shape isEqualToString:card2.shape] && ![card1.shape isEqualToString:card3.shape] && ![card2.shape isEqualToString:card3.shape]) {
+            if ((![card1.shape isEqualToString:card2.shape] && ![card1.shape isEqualToString:card3.shape] && ![card2.shape isEqualToString:card3.shape]) || ( [card1.shape isEqualToString:card2.shape] && [card2.shape isEqualToString:card3.shape])){
+                NSLog(@" shapes YES %@ %@ %@",card1.shape,card2.shape,card3.shape);
                 numMatches ++;
-            } else if ( [card1.shape isEqualToString:card2.shape] && [card2.shape isEqualToString:card3.shape]) {
-                numMatches ++;
-            } else {
+                     } else {
+                 NSLog(@" shapes NO%@ %@ %@",card1.shape,card2.shape,card3.shape);
                 return score;
             }
             //--------------------color-----------
-            if ((card1.color != card2.color) && (card1.color != card3.color)&& !(card2.color != card3.color)) {
+            if (((card1.color != card2.color) && (card1.color != card3.color)&& (card2.color != card3.color)) || ((card1.color == card2.color) && (card2.color == card3.color))) {
+                 NSLog(@" colors YES %d %d %d",card1.color,card2.color,card3.color);
                 numMatches ++;
-            } else if ( (card1.color == card2.color) && (card2.color == card3.color)) {
-                numMatches ++;
-            } else {
+             } else {
+                   NSLog(@" colors NO %d %d %d",card1.color,card2.color,card3.color);
                 return score;
             }
             //------------------------rank---------
-            if ((card1.rank != card2.rank) && (card1.rank != card3.rank)&& !(card2.rank != card3.rank)) {
-                numMatches ++;
-            } else if ( (card1.rank == card2.rank) && (card2.color == card3.rank)) {
+            if (((card1.rank != card2.rank) && (card1.rank != card3.rank)&& (card2.rank != card3.rank)) || ((card1.rank == card2.rank) && (card2.rank == card3.rank)) ){
+                  NSLog(@" ranks YES %d %d %d",card1.rank,card2.rank,card3.rank);
                 numMatches ++;
             } else {
+                NSLog(@" ranks NO %d %d %d",card1.rank,card2.rank,card3.rank);
                 return score;
             }
             //----------------------shading---------
-            if ((card1.shading != card2.shading) && (card1.shading != card3.shading)&& !(card2.shading != card3.shading)) {
+            if (((card1.shading != card2.shading) && (card1.shading != card3.shading)&& (card2.shading != card3.shading)) || ( (card1.shading == card2.shading) &&(card2.shading == card3.shading))){
+                NSLog(@" shadings YES %d %d %d",card1.shading,card2.shading,card3.shading);
                 numMatches ++;
-            } else if ( (card1.shading == card2.shading) &&(card2.shading == card3.shading)) {
-                numMatches ++;
-            } else {
+             } else {
+                 NSLog(@" shadings NO %d %d %d",card1.shading,card2.shading,card3.shading);
                 return score;
             }
             switch (numMatches) {
